@@ -1,4 +1,5 @@
-require 'inheritable_attributes'
+require 'action_web_service/support/inheritable_attributes'
+
 class Class # :nodoc:
   def class_inheritable_option(sym, default_value=nil)
     write_inheritable_attribute sym, default_value
