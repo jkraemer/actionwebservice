@@ -11,7 +11,7 @@ class Class # :nodoc:
           read_inheritable_attribute(:#{sym})
         end
       end
-      
+
       def self.#{sym}=(value)
         write_inheritable_attribute(:#{sym}, value)
       end
