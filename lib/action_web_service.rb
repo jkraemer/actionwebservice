@@ -61,9 +61,16 @@ ActionController::Base.class_eval do
   include ActionWebService::Protocol::XmlRpc
   include ActionWebService::Container::Direct
   include ActionWebService::Container::Delegated
-  include ActionWebService::Container::ActionController
+  # breaks inclusion of routes in controllers by doing
+  #   alias_method_chain :inherited, :api
+  # using delegated dispatching mode should still work
+  # include ActionWebService::Container::ActionController
   include ActionWebService::Invocation
   include ActionWebService::Dispatcher
+  # this module also uses the :inherited alias stuff, fix is in there.
+  # downside: you have to manually
+  # include ActionWebService::Dispatcher::ActionControllerX::WsdlAction
+  # in your soap api controllers to get the wsdl action
   include ActionWebService::Dispatcher::ActionControllerX
   include ActionWebService::Scaffolding
 end

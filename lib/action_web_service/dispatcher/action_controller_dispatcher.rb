@@ -7,7 +7,9 @@ module ActionWebService # :nodoc:
       def self.included(base) # :nodoc:
         class << base
           include ClassMethods
-          alias_method_chain :inherited, :action_controller
+          # this breaks the automatic inclusion of routes in controllers with
+          # Rails 3.2.8 and possibly other versions
+#          alias_method_chain :inherited, :action_controller
         end
         base.class_eval do
           alias_method :web_service_direct_invoke_without_controller, :web_service_direct_invoke
