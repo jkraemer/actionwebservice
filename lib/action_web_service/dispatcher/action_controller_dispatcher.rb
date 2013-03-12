@@ -64,18 +64,15 @@ module ActionWebService # :nodoc:
               end
               log_request(ws_request, request.raw_post)
               if exception
-                Rails.logger.error(exception) unless logger.nil?
                 send_web_service_error_response(ws_request, exception)
               else
                 send_web_service_response(ws_response, bm.real)
               end
             else
               exception ||= DispatcherError.new("Malformed SOAP or XML-RPC protocol message")
-              Rails.logger.error(exception) unless logger.nil?
               send_web_service_error_response(ws_request, exception)
             end
           rescue Exception => e
-            Rails.logger.error(e) unless logger.nil?
             send_web_service_error_response(ws_request, e)
           end
 
@@ -86,6 +83,8 @@ module ActionWebService # :nodoc:
           end
 
           def send_web_service_error_response(ws_request, exception)
+            logger.error(exception) unless logger.nil?
+            Airbrake.notify(exception) if defined?(Airbrake)
             if ws_request
               unless self.class.web_service_exception_reporting
                 exception = DispatcherError.new("Internal server error (exception raised)")
@@ -157,7 +156,8 @@ module ActionWebService # :nodoc:
               options = { :type => 'text/xml', :disposition => 'inline' }
               send_data(to_wsdl, options)
             rescue Exception => e
-              Rails.logger.error(e) unless logger.nil?
+              logger.error(e) unless logger.nil?
+              Airbrake.notify(e)
             end
           when "POST" || :post
             render :status => 500, :text => 'POST not supported'
